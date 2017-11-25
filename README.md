@@ -2,8 +2,56 @@
 
 A library to quickly obtain and store shopify access tokens
 
-:construction: Still under development. Stable release is coming soon.
-:construction:
+> :warning: Still under development. Stable release is coming :soon:
+
+```
+yarn add shopify-token-store
+```
+
+```
+npm i shopify-token-store
+```
+
+## Example
+
+Create a new shopify store token instance with your configuration:
+
+```javascript
+import ShopifyTokenStore from "shopify-token-store";
+
+const shopifyStoreToken = new ShopifyTokenStore({
+	sharedSecret: process.env.SHOPIFY_APP_SECRET,
+	redirectUri: url.resolve(
+		process.env.SHOPIFY_APP_ORIGIN,
+		"/shopify/auth/callback"
+	),
+	apiKey: process.env.SHOPIFY_APP_KEY,
+	scopes: ["read_products", "write_products"]
+});
+```
+
+This instance can be used both to obtain new access tokens and to store them
+according to the specified store strategy.
+
+> :warning: The default `storeStrategy` is a memory strategy that is not meant
+
+    to be used in production.
+
+### Generate authorization url
+
+```javascript
+const nonce = shopifyTokenStore.generateNonce();
+const authUrl = shopifyTokenStore.generateAuthorizationUrl(shopName, { nonce });
+```
+
+### Obtain access token
+
+```javascript
+const accessToken: string = await shopifyTokenStore.getAccessToken(
+			hostname,
+			code
+		);
+```
 
 ## Roadmap
 
