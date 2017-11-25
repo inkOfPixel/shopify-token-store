@@ -2,6 +2,9 @@
 
 A library to quickly obtain and store shopify access tokens
 
+:construction: Still under development. Stable release is coming soon.
+:construction:
+
 ## Roadmap
 
 * [x] Implement shopify access token offline mode

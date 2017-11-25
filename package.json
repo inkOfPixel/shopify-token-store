@@ -1,21 +1,19 @@
 {
 	"name": "shopify-token-store",
-	"version": "0.1.0",
-	"description": "A library to quickly obtain and store shopify access tokens",
-	"keywords": [
-		"shopify",
-		"token",
-		"oauth",
-		"api"
-	],
-	"main": "dist/shopify-token-store.js",
+	"version": "0.1.0-alpha",
+	"description":
+		"A library to quickly obtain and store shopify access tokens",
+	"keywords": ["shopify", "token", "oauth", "api"],
+	"homepage": "https://github.com/inkOfPixel/shopify-token-store",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/inkOfPixel/shopify-token-store.git"
 	},
 	"bugs": "https://github.com/inkOfPixel/shopify-token-store/issues",
-	"author": "Massimo De Marchi <massimodemarchi91@gmail.com> (https://github.com/macs91)",
+	"author":
+		"Massimo De Marchi <massimodemarchi91@gmail.com> (https://github.com/macs91)",
 	"license": "MIT",
+	"main": "dist/shopify-token-store.js",
 	"devDependencies": {
 		"babel-cli": "6.26.0",
 		"babel-core": "6.26.0",
@@ -30,7 +28,7 @@
 		"flow-typed": "2.2.3",
 		"lodash": "4.17.4",
 		"prettier": "1.8.2",
-		"uglifyjs-webpack-plugin": "1.1.0",
+		"uglifyjs-webpack-plugin": "1.1.1",
 		"webpack": "3.8.1",
 		"webpack-node-externals": "1.6.0"
 	},
