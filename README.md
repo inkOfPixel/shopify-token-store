@@ -1,9 +1,10 @@
 # Shopify Token Store
 
-A library to quickly obtain and store shopify access tokens
-:closed_lock_with_key:
+Obtain and store shopify access tokens :closed_lock_with_key:
 
-> :warning: Still under development. Stable release is coming :soon:
+[![npm](https://img.shields.io/npm/v/shopify-token-store.svg?style=flat-square)](https://www.npmjs.com/package/shopify-token-store)
+
+> :warning: The API is not yet stable.
 
 ```
 yarn add shopify-token-store
@@ -36,7 +37,9 @@ Creates a new `ShopifyTokenStore` instance.
 * `storeStrategy` - Optional - A `TokenStoreStrategy` that defines how the token
 	will be stored. Defaults to `MemoryStrategy` (:warning: Not suitable for
 	production).
-* `timeout` - Optional - number
+* `timeout` - Optional - A `number` of milliseconds to wait when sending a
+	request to Shopify (e.g. request the access token). Defaults to 60000 (1
+	minute).
 
 #### Return value
 
@@ -137,8 +140,8 @@ if (shopifyTokenStore.verifyHMAC(request.query)) {
 
 ### `shopifyTokenStore.getAccessToken(shop, code)`
 
-When our `redirectUri` gets called, the request query string will contain `shop`
-and `code` parameters that we can use to obtain the access token.
+When `redirectUri` gets called, the request query will contain `shop` and `code`
+parameters that we can use to obtain the access token.
 
 #### `shop`
 
@@ -169,10 +172,8 @@ the configured `storeStrategy`).
 
 A `string` representing the id that uniquely identify the user.
 
-> The user id can be for example a
-
-    [JWT](https://github.com/auth0/node-jsonwebtoken) token stored in the client
-	localStorage.
+<!-- prettier-ignore -->
+> The user id can be for example a [JWT](https://github.com/auth0/node-jsonwebtoken) token stored in the client localStorage.
 
 #### `shopName`
 
