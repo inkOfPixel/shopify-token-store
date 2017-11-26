@@ -1,6 +1,6 @@
 {
 	"name": "shopify-token-store",
-	"version": "0.1.0-alpha",
+	"version": "0.1.0",
 	"description": "A library to quickly obtain and store shopify access tokens",
 	"keywords": [
 		"shopify",
