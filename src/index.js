@@ -113,7 +113,7 @@ export default class ShopifyTokenStore {
 					Accept: "application/json"
 				},
 				path: "/admin/oauth/access_token",
-				hostname: hostname,
+				hostname,
 				method: "POST"
 			});
 
@@ -124,7 +124,9 @@ export default class ShopifyTokenStore {
 			}, this.timeout);
 
 			request.on("response", response => {
+				console.log("\nOn response");
 				const { statusCode } = response;
+				console.log("status code", statusCode);
 				let body = "";
 
 				response.setEncoding("utf8");
