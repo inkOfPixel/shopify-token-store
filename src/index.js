@@ -99,6 +99,7 @@ export default class ShopifyTokenStore {
 	}
 
 	getAccessToken(hostname: string, code: string): Promise<string> {
+		console.log("\n\ngetAccessToken..", hostname, code);
 		return new Promise((resolve, reject) => {
 			const data = JSON.stringify({
 				client_secret: this.sharedSecret,
