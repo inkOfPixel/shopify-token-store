@@ -106,7 +106,7 @@ export default class ShopifyTokenStore {
 				client_id: this.apiKey,
 				code
 			});
-
+			console.log("Create https request..");
 			const request = https.request({
 				headers: {
 					"Content-Length": Buffer.byteLength(data),
@@ -117,15 +117,15 @@ export default class ShopifyTokenStore {
 				hostname,
 				method: "POST"
 			});
-
+			console.log("Set timeout..");
 			let timer = setTimeout(() => {
 				request.abort();
 				timer = null;
 				reject(new Error("Request timed out"));
 			}, this.timeout);
-
+			console.log("Wait for response..");
 			request.on("response", response => {
-				console.log("\nOn response");
+				console.log("\nOn response..");
 				const { statusCode } = response;
 				console.log("status code", statusCode);
 				let body = "";
@@ -159,11 +159,11 @@ export default class ShopifyTokenStore {
 				});
 			});
 
-			request.on("error", err => {
+			request.on("error", error => {
+				console.log("Ahi! Error!", JSON.stringify(error, null, "\t"));
 				if (!timer) return;
-
 				clearTimeout(timer);
-				reject(err);
+				reject(error);
 			});
 
 			request.end(data);
