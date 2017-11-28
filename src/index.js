@@ -1,6 +1,7 @@
 // @flow
 
 import https from "https";
+import request from "request-promise-native";
 import crypto from "crypto";
 import url from "url";
 import MemoryStrategy from "./strategies/MemoryStrategy";
@@ -98,76 +99,101 @@ export default class ShopifyTokenStore {
 		return digest === query.hmac;
 	}
 
-	getAccessToken(hostname: string, code: string): Promise<string> {
+	async getAccessToken(hostname: string, code: string): Promise<string> {
 		console.log("\n\ngetAccessToken..", hostname, code);
-		return new Promise((resolve, reject) => {
-			const data = JSON.stringify({
-				client_secret: this.sharedSecret,
-				client_id: this.apiKey,
-				code
-			});
-			console.log("Create https request..");
-			const request = https.request({
-				headers: {
-					"Content-Length": Buffer.byteLength(data),
-					"Content-Type": "application/json",
-					Accept: "application/json"
-				},
-				path: "/admin/oauth/access_token",
-				hostname,
-				method: "POST"
-			});
-			console.log("Set timeout..");
-			let timer = setTimeout(() => {
-				request.abort();
-				timer = null;
-				reject(new Error("Request timed out"));
-			}, this.timeout);
-			console.log("Wait for response..");
-			request.on("response", response => {
-				console.log("\nOn response..");
-				const { statusCode } = response;
-				console.log("status code", statusCode);
-				let body = "";
-
-				response.setEncoding("utf8");
-				response.on("data", chunk => (body += chunk));
-				response.on("end", () => {
-					if (timer) {
-						clearTimeout(timer);
-						if (statusCode !== 200) {
-							const getAccessTokenError: any = new Error(
-								"Failed to get Shopify access token"
-							);
-							getAccessTokenError.responseBody = body;
-							getAccessTokenError.statusCode = statusCode;
-							reject(getAccessTokenError);
-						} else {
-							try {
-								const { access_token } = JSON.parse(body);
-								resolve(access_token);
-							} catch (error) {
-								const parseError: any = new Error(
-									"Failed to parse the response body"
-								);
-								parseError.responseBody = body;
-								parseError.statusCode = statusCode;
-								reject(parseError);
-							}
-						}
-					}
-				});
-			});
-
-			request.on("error", error => {
-				console.log("Ahi! Error!", JSON.stringify(error, null, "\t"));
-				if (!timer) return;
-				clearTimeout(timer);
-				reject(error);
-			});
-
-			request.end(data);
+		const body = JSON.stringify({
+			client_secret: this.sharedSecret,
+			client_id: this.apiKey,
+			code
 		});
+
+		const response = await request({
+			body,
+			json: true,
+			method: "POST",
+			uri: url.resolve(`https://${hostname}`, "/admin/oauth/access_token")
+		});
+
+		console.log(JSON.stringify({ ...response }, null, "\t"));
+
+		return response;
+		// return new Promise((resolve, reject) => {
+		// 	let timer;
+		// 	try {
+		// 		timer = timer = setTimeout(() => {
+		// 			request.abort();
+		// 			timer = null;
+		// 			reject(new Error("Request timed out"));
+		// 		}, this.timeout);
+		// 		const data = JSON.stringify({
+		// 			client_secret: this.sharedSecret,
+		// 			client_id: this.apiKey,
+		// 			code
+		// 		});
+		// 		console.log("Create https request..", data);
+		// 		const request = https.request({
+		// 			headers: {
+		// 				"Content-Length": Buffer.byteLength(data),
+		// 				"Content-Type": "application/json",
+		// 				Accept: "application/json"
+		// 			},
+		// 			path: "/admin/oauth/access_token",
+		// 			hostname,
+		// 			method: "POST"
+		// 		});
+		// 		console.log("Wait for response..");
+		// 		request.on("response", response => {
+		// 			console.log("\nOn response..");
+		// 			const { statusCode } = response;
+		// 			console.log("status code", statusCode);
+		// 			let body = "";
+		//
+		// 			response.setEncoding("utf8");
+		// 			response.on("data", chunk => (body += chunk));
+		// 			response.on("end", () => {
+		// 				if (timer) {
+		// 					clearTimeout(timer);
+		// 					if (statusCode !== 200) {
+		// 						const getAccessTokenError: any = new Error(
+		// 							"Failed to get Shopify access token"
+		// 						);
+		// 						getAccessTokenError.responseBody = body;
+		// 						getAccessTokenError.statusCode = statusCode;
+		// 						reject(getAccessTokenError);
+		// 					} else {
+		// 						try {
+		// 							const { access_token } = JSON.parse(body);
+		// 							resolve(access_token);
+		// 						} catch (error) {
+		// 							const parseError: any = new Error(
+		// 								"Failed to parse the response body"
+		// 							);
+		// 							parseError.responseBody = body;
+		// 							parseError.statusCode = statusCode;
+		// 							reject(parseError);
+		// 						}
+		// 					}
+		// 				}
+		// 			});
+		// 		});
+		//
+		// 		request.on("error", error => {
+		// 			console.log(
+		// 				"Ahi! Error!",
+		// 				JSON.stringify(error, null, "\t")
+		// 			);
+		// 			if (!timer) return;
+		// 			clearTimeout(timer);
+		// 			reject(error);
+		// 		});
+		//
+		// 		request.end(data);
+		// 	} catch (error) {
+		// 		if (!timer) return;
+		// 		clearTimeout(timer);
+		// 		reject(error);
+		// 	}
+		// });
 	}
 
 	getByUserId(userId: string): Promise<string | void> {

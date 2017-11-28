@@ -41,5 +41,8 @@
 		"build": "webpack",
 		"flow-typed": "flow-typed install -s",
 		"test": "jest"
+	},
+	"dependencies": {
+		"request-promise-native": "^1.0.5"
 	}
 }
