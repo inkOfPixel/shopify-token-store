@@ -100,15 +100,18 @@ export default class ShopifyTokenStore {
 	}
 
 	async getAccessToken(hostname: string, code: string): Promise<string> {
-		console.log("\n\ngetAccessToken..", hostname, code);
-		const body = JSON.stringify({
-			client_secret: this.sharedSecret,
-			client_id: this.apiKey,
-			code
-		});
+		console.log("\n\ngetAccessToken..", hostname, code, this.apiKey);
 
 		const response = await request({
-			body,
+			body: {
+				client_secret: this.sharedSecret,
+				client_id: this.apiKey,
+				code
+			},
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json"
+			},
 			json: true,
 			method: "POST",
 			uri: url.resolve(`https://${hostname}`, "/admin/oauth/access_token")
@@ -116,7 +119,7 @@ export default class ShopifyTokenStore {
 
 		console.log(JSON.stringify({ ...response }, null, "\t"));
 
-		return response;
+		return response.access_token;
 		// return new Promise((resolve, reject) => {
 		// 	let timer;
 		// 	try {
